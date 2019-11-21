@@ -1,0 +1,90 @@
+From ce63421b397e1967ac41d02d27e6cc789f262668 Mon Sep 17 00:00:00 2001
+From: Joris Offouga <offougajoris@gmail.com>
+Date: Thu, 21 Nov 2019 23:18:29 +0100
+Subject: [PATCH] arm:dts:bcm27100-rpi-3-b-plus: Add mcp3204 and 74hc95 spi
+ entry node
+
+Signed-off-by: Joris Offouga <offougajoris@gmail.com>
+---
+ arch/arm/boot/dts/bcm2710-rpi-3-b-plus.dts | 56 +++++++++++++++-------
+ 1 file changed, 40 insertions(+), 16 deletions(-)
+
+diff --git a/arch/arm/boot/dts/bcm2710-rpi-3-b-plus.dts b/arch/arm/boot/dts/bcm2710-rpi-3-b-plus.dts
+index a54b68d476fe..e37936c27eb8 100644
+--- a/arch/arm/boot/dts/bcm2710-rpi-3-b-plus.dts
++++ b/arch/arm/boot/dts/bcm2710-rpi-3-b-plus.dts
+@@ -31,6 +31,16 @@
+ 		brcm,function = <1>; /* output */
+ 	};
+ 
++	spi1_pins: spi1_pins {
++		brcm,pins = <19 20 21>;
++		brcm,function = <16>; /* alt0 */
++	};
++
++	spi1_cs_pins: spi1_cs_pins {
++		brcm,pins = <16>;
++		brcm,function = <1>; /* output */
++	};
++
+ 	i2c0_pins: i2c0 {
+ 		brcm,pins = <0 1>;
+ 		brcm,function = <4>;
+@@ -105,24 +115,38 @@
+ };
+ 
+ &spi0 {
++	compatible = "spi-gpio";
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&spi0_pins &spi0_cs_pins>;
+-	cs-gpios = <&gpio 8 1>, <&gpio 7 1>;
+-
+-	spidev0: spidev@0{
+-		compatible = "spidev";
+-		reg = <0>;	/* CE0 */
+-		#address-cells = <1>;
+-		#size-cells = <0>;
+-		spi-max-frequency = <125000000>;
+-	};
+-
+-	spidev1: spidev@1{
+-		compatible = "spidev";
+-		reg = <1>;	/* CE1 */
+-		#address-cells = <1>;
+-		#size-cells = <0>;
+-		spi-max-frequency = <125000000>;
++	status = "okay";
++	num-chipselects = <1>;
++
++	cs-gpios = <&gpio 8 1>;
++	gpio-sck = <&gpio 11 1>;
++	gpio-mosi = <&gpio 10 1>;
++
++	gpio_spi: gpio_spi@0{
++		compatible = "fairchild,74hc595";
++		gpio-controller;
++		#gpio-cells = <2>;
++		reg = <0>;
++		registers-number = <2>;
++		registers-default = /bits/ 8 <0x74>;
++		spi-max-frequency = <100000>;
++	};
++};
++
++&spi1{
++	pinctrl-names = "default";
++	pinctrl-0 = <&spi1_pins &spi1_cs_pins>;
++	status = "okay";
++	cs-gpios = <&gpio 16 1>;
++
++	mcp3204: mcp3204@0{
++		compatible = "microchip,mcp3402";
++		reg = <0>;
++		spi-max-frequency = <1000000>;
++		vref-supply = <&vdd_5v0_reg>;
+ 	};
+ };
+ 
+-- 
+2.17.1
+

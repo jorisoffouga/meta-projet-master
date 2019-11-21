@@ -1,0 +1,48 @@
+From 41897a806895fbedbaf34e13bdbdc652e504250b Mon Sep 17 00:00:00 2001
+From: Joris Offouga <offougajoris@gmail.com>
+Date: Thu, 21 Nov 2019 23:18:29 +0100
+Subject: [PATCH] arm:dts:bcm27100-rpi-3-b-plus: Add mcp3204 spi entry node
+
+Signed-off-by: Joris Offouga <offougajoris@gmail.com>
+---
+ arch/arm/boot/dts/bcm2710-rpi-3-b-plus.dts | 24 ++++++++--------------
+ 1 file changed, 8 insertions(+), 16 deletions(-)
+
+diff --git a/arch/arm/boot/dts/bcm2710-rpi-3-b-plus.dts b/arch/arm/boot/dts/bcm2710-rpi-3-b-plus.dts
+index a54b68d476fe..e65a736a6bda 100644
+--- a/arch/arm/boot/dts/bcm2710-rpi-3-b-plus.dts
++++ b/arch/arm/boot/dts/bcm2710-rpi-3-b-plus.dts
+@@ -107,22 +107,14 @@
+ &spi0 {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&spi0_pins &spi0_cs_pins>;
+-	cs-gpios = <&gpio 8 1>, <&gpio 7 1>;
+-
+-	spidev0: spidev@0{
+-		compatible = "spidev";
+-		reg = <0>;	/* CE0 */
+-		#address-cells = <1>;
+-		#size-cells = <0>;
+-		spi-max-frequency = <125000000>;
+-	};
+-
+-	spidev1: spidev@1{
+-		compatible = "spidev";
+-		reg = <1>;	/* CE1 */
+-		#address-cells = <1>;
+-		#size-cells = <0>;
+-		spi-max-frequency = <125000000>;
++	status = "okay";
++	cs-gpios = <&gpio 8 1>;
++
++	mcp3204: mcp3204@0{
++		compatible = "microchip,mcp3402";
++		reg = <0>;
++		spi-max-frequency = <1000000>;
++		vref-supply = <&vdd_5v0_reg>;
+ 	};
+ };
+ 
+-- 
+2.17.1
+

@@ -1,0 +1,58 @@
+From 7ded3eb83240304d052c115675aa68beb3d20555 Mon Sep 17 00:00:00 2001
+From: Joris Offouga <offougajoris@gmail.com>
+Date: Thu, 21 Nov 2019 23:18:29 +0100
+Subject: [PATCH 3/3] arm:dts:bcm27100-rpi-3-b-plus: Add 74hc595 spi entry node
+
+Signed-off-by: Joris Offouga <offougajoris@gmail.com>
+---
+ arch/arm/boot/dts/bcm2710-rpi-3-b-plus.dts | 32 +++++++++++-----------
+ 1 file changed, 16 insertions(+), 16 deletions(-)
+
+diff --git a/arch/arm/boot/dts/bcm2710-rpi-3-b-plus.dts b/arch/arm/boot/dts/bcm2710-rpi-3-b-plus.dts
+index a54b68d476fe..5de4e05b0384 100644
+--- a/arch/arm/boot/dts/bcm2710-rpi-3-b-plus.dts
++++ b/arch/arm/boot/dts/bcm2710-rpi-3-b-plus.dts
+@@ -105,24 +105,24 @@
+ };
+ 
+ &spi0 {
++	compatible = "spi-gpio";
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&spi0_pins &spi0_cs_pins>;
+-	cs-gpios = <&gpio 8 1>, <&gpio 7 1>;
+-
+-	spidev0: spidev@0{
+-		compatible = "spidev";
+-		reg = <0>;	/* CE0 */
+-		#address-cells = <1>;
+-		#size-cells = <0>;
+-		spi-max-frequency = <125000000>;
+-	};
+-
+-	spidev1: spidev@1{
+-		compatible = "spidev";
+-		reg = <1>;	/* CE1 */
+-		#address-cells = <1>;
+-		#size-cells = <0>;
+-		spi-max-frequency = <125000000>;
++	status = "okay";
++	num-chipselects = <1>;
++
++	cs-gpios = <&gpio 8 1>;
++	gpio-sck = <&gpio 11 1>;
++	gpio-mosi = <&gpio 10 1>;
++
++	gpio_spi: gpio_spi@0{
++		compatible = "fairchild,74hc595";
++		gpio-controller;
++		#gpio-cells = <2>;
++		reg = <0>;
++		registers-number = <2>;
++		registers-default = /bits/ 8 <0x74>;
++		spi-max-frequency = <100000>;
+ 	};
+ };
+ 
+-- 
+2.17.1
+
