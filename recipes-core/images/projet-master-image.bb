@@ -28,6 +28,7 @@ IMAGE_INSTALL_append = " \
 	dnsmasq \
 	hostapd \
 	mosquitto \
+	project-connect \
 "
 
 # Kernel
